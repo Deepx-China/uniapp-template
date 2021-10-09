@@ -1,0 +1,30 @@
+$pageBg: #f5f9fc;
+$black: #283036;
+$black5: #5b656d;
+$black9: #919aa1;
+$blue: #5192ff;
+$gray: rgba(232, 232, 232, 1);
+$red: #f55746;
+$orange: rgb(245, 171, 53);
+$green: rgba(123, 239, 178, 1);
+$white: #ffffff;
+
+body {
+	padding: 0;
+	margin: 0;
+	color: $black;
+	font-family: -apple-system-font,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif,"Microsoft YaHei UI";
+}
+
+@mixin textoverflow {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	word-break: keep-all;
+}
+
+@mixin horizontal-center {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}

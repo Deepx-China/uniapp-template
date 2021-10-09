@@ -1,0 +1,54 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		    "path" : "pages/tabs/tab-1",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "首页",
+				"navigationBarBackgroundColor":"#FFFFFF",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/tabs/tab-2",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "首页",
+				"navigationBarBackgroundColor":"#FFFFFF",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar":{
+		"color":"#ACBCD2",
+		"selectedColor":"#5292FF",
+		"backgroundColor":"#FFFFFF",
+		"borderStyle":"white",
+		"fontSize":"12px",
+		"iconWidth":"36px",
+		"spacing":"-5rpx",
+		"height":"110rpx",
+		"list":[
+			{
+				"pagePath":"pages/tabs/tab-1",
+				"text":"单据列表",
+				"iconPath":"./static/icon/tab_1.png",
+				"selectedIconPath":"static/icon/tab_1_active.png"
+			},
+			{
+				"pagePath":"pages/tabs/tab-2",
+				"text":"审批",
+				"iconPath":"./static/icon/tab_2.png",
+				"selectedIconPath":"static/icon/tab_2_active.png"
+			}
+		]
+	}
+}
