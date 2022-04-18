@@ -1,3 +1,6 @@
+body {
+  font-family: -apple-system-font,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif,"Microsoft YaHei UI";
+}
 $pageBg: #f5f9fc;
 $black: #283036;
 $black5: #5b656d;
@@ -5,16 +8,10 @@ $black9: #919aa1;
 $blue: #5192ff;
 $gray: rgba(232, 232, 232, 1);
 $red: #f55746;
-$orange: rgb(245, 171, 53);
+$orange: rgba(252, 109, 31, 1);
 $green: rgba(123, 239, 178, 1);
 $white: #ffffff;
 
-body {
-	padding: 0;
-	margin: 0;
-	color: $black;
-	font-family: -apple-system-font,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif,"Microsoft YaHei UI";
-}
 
 @mixin textoverflow {
 	overflow: hidden;
@@ -27,4 +24,24 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+}
+
+@mixin flex-left {
+	display: flex;
+	justify-content: flex-start;
+}
+
+@mixin flex-right {
+	display: flex;
+	justify-content: flex-end;
+}
+
+@mixin flex-center {
+	display: flex;
+	justify-content: center;
+}
+
+@mixin flex-bt {
+	display: flex;
+	justify-content: space-between;
 }

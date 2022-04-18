@@ -1,21 +1,20 @@
-import { Number2Fix } from './string.js'
 
-/**
- * Date2Str: 时间对象转换为时间字符串
- * @param {object} ds 
- * @param {string} dt 
- */
-export const Date2Str = function(ds, dt) {
+export const getFormate = function(ds, dt) {
+	let d = ''
+	if (typeof ds == 'object') {
+		d = ds
+	} else {
+		d = this.Str2Date(ds);
+	}
 	dt = dt ? dt : "y-m-d h:i:s"
-	dt = dt.replace(/y|Y/g, ds.getFullYear().toString());
-	dt = dt.replace(/m|M/g, this.Number2Fix(ds.getMonth() + 1));
-	dt = dt.replace(/d|D/g, this.Number2Fix(ds.getDate()));
-	dt = dt.replace(/h|H/g, this.Number2Fix(ds.getHours()));
-	dt = dt.replace(/i|I/g, this.Number2Fix(ds.getMinutes()));
-	dt = dt.replace(/s|S/g, this.Number2Fix(ds.getSeconds()));
+	dt = dt.replace(/y|Y/g, d.getFullYear().toString());
+	dt = dt.replace(/m|M/g, this.Number2Fix(d.getMonth() + 1));
+	dt = dt.replace(/d|D/g, this.Number2Fix(d.getDate()));
+	dt = dt.replace(/h|H/g, this.Number2Fix(d.getHours()));
+	dt = dt.replace(/i|I/g, this.Number2Fix(d.getMinutes()));
+	dt = dt.replace(/s|S/g, this.Number2Fix(d.getSeconds()));
 	return dt;
 }
-
 /**
  * Str2Date: 时间字符串转换为时间对象
  * @param {string} str 
@@ -28,11 +27,28 @@ export const Str2Date = function(str) {
 	}
 }
 
+    /**
+     * Date2Str: 时间对象转换为时间字符串
+     * @param {object} date 
+     */
+export const Date2Str = function(date, delimiter) {
+	if (!date) {
+		date = new Date()
+	}
+	delimiter = delimiter ? delimiter : '-';
+	let year = date.getFullYear();
+	let month = date.getMonth() + 1;
+	let day = date.getDate();
+	month = month < 10 ? '0' + month : month;
+	day = day < 10 ? '0' + day : day;
+	return [year, month, day].join(delimiter)
+}
+
 /**
- * GetDate: 根据时间对象获取当月天数
+ * GetDays: 根据时间对象获取当月天数
  * @param {object} date 
  */
-export const GetDate = function(date) {
+export const GetDays = function(date) {
 	let curMonth = date.getMonth();
 	let curDate = date.getDate();
 	date.setMonth(curMonth + 1);
@@ -44,31 +60,30 @@ export const GetDate = function(date) {
 }
 
 /**
- * DatestrReduce: 日期做减法，返回时间戳
+ * DateReduce: 日期做减法，返回时间戳
  * @param {string} d1 
  * @param {string} d2 
  */
-export const DatestrReduce = function(d1, d2) {
+export const DateReduce = function(d1, d2) {
 	d1 = Str2Date(d1);
 	d2 = Str2Date(d2);
 	return Date.parse(d1) - Date.parse(d2);
 }
 
 /**
- * DatestrReduce: 日期做减法，返回时间戳
- * @param {object} d1 
- * @param {object} d2 
+ * Number2Fix: 不足两位数的数字补零
+ * @param n 
  */
-export const DateReduce = function(d1, d2) {
-	return Date.parse(d1) - Date.parse(d2);
+export const Number2Fix = function(n) {
+	let rs = n < 10 ? "0" + n : n;
+	return rs.toString();
 }
 
 /**
- * DateAferDays: 日期加上天数，返回日期对象
- * @param {object} date
- * @param {number} num
+ * GetDate: 获取某个月日期对象
+ * @param {Object} date
  */
-export const DateAferDays = function(date, num) {
+export const GetNumberOfMonth = function(date, num) {
 	num = num ? num : 0
 	let year = parseInt(date.getFullYear())
 	let month = parseInt(date.getMonth()) + num
@@ -86,12 +101,4 @@ export const DateAferDays = function(date, num) {
 		month,
 		day
 	)
-}
-module.exports = {
-  Date2Str,
-  Str2Date,
-  GetDate,
-  DatestrReduce,
-  DateReduce,
-  DateAferDays
 }

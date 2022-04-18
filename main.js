@@ -1,29 +1,27 @@
-import Vue from 'vue'
 import App from './App'
-import Utils from 'utils/index.js'
-import Cache from 'utils/cache.js'
-import CityUtil from './utils/city.js'
-import * as RequestUtil from './utils/request.js'
-import Api from './utils/apis.js'
-import DateUtil from 'utils/date.js'
-import UserUtil from 'utils/user.js'
-
-Vue.config.productionTip = false
-
-App.mpType = 'app'
-
+import Util from './utils/index.js'
+import Api from './server/api.js'
 Vue.prototype.api = Api
-Vue.prototype.http = RequestUtil
-Vue.prototype.util = Utils
-Vue.prototype.jump = Utils.jump
-Vue.prototype.jumpTab = Utils.jumpTab
-Vue.prototype.cache = Cache
-Vue.prototype.cityUtil = CityUtil
-Vue.prototype.date = DateUtil
-Vue.prototype.user = UserUtil
+Vue.prototype.http = Util
+Vue.prototype.util = Util
+Vue.prototype.jump = Util.jump
 
+// #ifndef VUE3
+import Vue from 'vue'
+Vue.config.productionTip = false
+App.mpType = 'app'
 const app = new Vue({
     ...App
 })
 app.$mount()
+// #endif
 
+// #ifdef VUE3
+import { createSSRApp } from 'vue'
+export function createApp() {
+  const app = createSSRApp(App)
+  return {
+    app
+  }
+}
+// #endif

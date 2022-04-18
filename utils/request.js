@@ -1,61 +1,77 @@
 import cache from './cache.js'
-import mock from '../mock/index.js'
-// import { getUser } from './user.js'
+import {
+	getUser,
+	clearUser
+} from './user.js'
 
-// const host = 'https://cloud.cn2030.com/sc'
-const host = 'http://192.168.11.213:8080';
+let host = 'http://app.zhifeishengwu.com:1122'
+// let host = 'http://192.168.11.2:8082'
 let token = ''
+let errTimes = 0;
 
-export const setToken = function () {
+export const setToken = function(_token) {
+	token = _token
 	cache.set('token', token)
 }
 
-export const getHost = function () {
+export const getHost = function() {
 	return host
 }
 
-export const post = function(url, data, options) {
-	let userinfo = cache.get('userinfo')
-	let header = {
-		// "Authorization": "Bearer field"
-		"Authorization": "Bearer office"
+export const post = async function(url, data, options, internal) {
+	if (internal) {
+		errTimes++;
+	} else {
+		errTimes = 0;
 	}
-	if (userinfo && userinfo.platform == 'ios') {
-		header['cookie'] = 'ASP.NET_SessionId=' + userinfo.authcode
+	// 设置请求主机名
+	let hostcache = cache.get('hostcache')
+	if (hostcache && hostcache.url) {
+		host = hostcache.url
 	}
-	return new Promise((r, j) => 
-	{
-		uni.request({
+	let userinfo = await getUser();
+	let header = {}
+	if (options && options.header) {
+		header = options.header
+	}
+	header['token'] = userinfo.token;
+	return new Promise((r, j) => {
+		dd.httpRequest({
 			url: host + url,
 			method: 'POST',
 			data: JSON.stringify(data),
-			header: {
+			headers: {
 				...header,
-				"content-type": "application/json",
+				"Content-Type": "application/json",
 			},
-			success(res) {
-				if (res.statusCode == 401) {
-					uni.showModal({
-						title: '登录过期',
-						content: '请重新进入小程序',
-						showCancel: false,
-						success: async() => {
-							// await getUser();
-							post(url, data, options).then(_r => {
-								r(_r);
-							});
-						}
-					})
-					return
-				}
-				if (options && options.ignore) {
-					r(res.data)
-					return
-				}
-				if (res.statusCode != 200) {
+			dataType: 'json',
+			success: async function(res) {
+				if (res.status != 200) {
 					uni.showModal({
 						title: '请求失败',
-						content: res.errMsg,
+						content: '请求失败，错误码：' + res.status,
+						showCancel: false
+					})
+				} else if (options && options.ignore) {
+					r(res.data)
+					return
+				} else if (res.data.status == 408) {
+					if (errTimes < 2) {
+						clearUser();
+						userinfo = await getUser();
+						if (userinfo && userinfo.statusCode) {
+							post(url, data, options, true).then(_r => {
+								r(_r);
+							});
+							return;
+						}
+					}
+					r(false)
+					return
+				} else if (res.data.status != 200) {
+					uni.showModal({
+						title: '请求失败',
+						content: res.data.msg,
 						showCancel: false
 					})
 					return
@@ -80,27 +96,21 @@ export const post = function(url, data, options) {
 	})
 }
 
-export const get = function (url, options) {
-	let data = options ? (options.params ? options.params : {}) : {}
-	let header = {
-		// "Authorization": "Bearer field"
-		"Authorization": "Bearer office"
+export const get = async function(url, options, internal) {
+	if (internal) {
+		errTimes++;
+	} else {
+		errTimes = 0;
 	}
+	let data = options ? (options.params ? options.params : {}) : {}
+	let header = {}
 	let dataType = options ? (options.dataType ? options.dataType : 'json') : 'json'
 	if (options && options.header) {
 		header = options.header
 	}
-	let userinfo = cache.get('userinfo')
-	if (userinfo && userinfo.platform == 'ios') {
-		header['cookie'] = 'ASP.NET_SessionId=' + userinfo.authcode
-	}
-	return new Promise((r, j) =>
-	{
-		// if (options.mock) {
-		// 	r(mock[url].call(options.params));
-		// 	return;
-		// }
-		
+	let userinfo = await getUser()
+	header['token'] = userinfo.token;
+	return new Promise((r, j) => {
 		if (!options || options.loading !== false) {
 			uni.showLoading({
 				title: '请求中...'
@@ -114,29 +124,38 @@ export const get = function (url, options) {
 			header: {
 				...header,
 			},
-			success(res) {
-				if (res.statusCode == 401) {
+			success: async function(res) {
+				if (res.statusCode != 200) {
 					uni.showModal({
-						title: '登录过期',
-						content: '请重新进入小程序',
-						showCancel: false,
-						success: async() => {
-							// await getUser();
-							get(url, options).then(_r => {
-								r(_r);
-							});
-						}
+						title: '请求失败',
+						content: '请求失败，错误码：' + res.statusCode,
+						showCancel: false
 					})
+					r(false)
 					return
 				}
 				if (options && options.ignore) {
 					r(res.data)
 					return
 				}
-				if (res.statusCode != 200) {
+				if (res.data.status == 408) {
+					if (errTimes < 2) {
+						clearUser();
+						userinfo = await getUser();
+						if (userinfo && userinfo.statusCode) {
+							get(url, options, true).then(_r => {
+								r(_r);
+							});
+							return;
+						}
+					}
+					r(false)
+					return
+				}
+				if (res.data.status != 200) {
 					uni.showModal({
 						title: '请求失败',
-						content: res.errMsg,
+						content: res.data.msg,
 						showCancel: false
 					})
 					r(false)
@@ -157,8 +176,12 @@ export const get = function (url, options) {
 }
 
 export const upload = function(url, options) {
-	return new Promise((r, j) => 
-	{
+	// 设置请求主机名
+	let hostcache = cache.get('hostcache')
+	if (hostcache && hostcache.url) {
+		host = hostcache.url
+	}
+	return new Promise((r, j) => {
 		uni.uploadFile({
 			url: host + url,
 			...options,
@@ -190,4 +213,15 @@ export const upload = function(url, options) {
 			},
 		})
 	})
+}
+
+
+const getsysinfo = function() {
+	return new Promise((r, j) => {
+		uni.getSystemInfo({
+			success: res => {
+				r(res);
+			}
+		})
+	});
 }

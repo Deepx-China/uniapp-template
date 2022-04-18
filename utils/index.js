@@ -1,9 +1,39 @@
-import * as routerUtil from './router.js'
-import * as stringUtil from './string.js'
-import * as dateUtil from './date.js'
+import { getUser, clearUser } from './user.js'
+import { warn } from './debug.js'
+import { post, get, setToken, getHost, upload } from './request.js'
+import { jump, jumpTab, getCurrentPath, setCurrentPath } from './router.js'
+import {
+	getFormate,
+	Str2Date,
+	Date2Str,
+	GetDays,
+	DateReduce,
+	Number2Fix,
+	GetNumberOfMonth,
+} from './date.js'
 
-export default {
-	...routerUtil,
-	...stringUtil,
-	...dateUtil,
+import cache from './cache.js'
+
+
+module.exports = { 
+	getUser,
+	clearUser,
+	warn,
+	jump,
+	jumpTab,
+	getFormate,
+	Str2Date,
+	Date2Str,
+	GetDays,
+	DateReduce,
+	Number2Fix,
+	GetNumberOfMonth,
+	getCurrentPath, 
+	setCurrentPath,
+	post,
+	get,
+	setToken,
+	getHost,
+	upload,
+	cache,
 }

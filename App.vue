@@ -1,5 +1,4 @@
 <script>
-	import mock from './mock/index.js'
 	export default {
 		onLaunch: function() {
 			// pwa install
